@@ -238,7 +238,7 @@ function goSearch(){const q=document.getElementById('sInput').value.trim();if(q)
 function setE(n,el){curE=n;document.querySelectorAll('.epill').forEach(p=>p.classList.remove('active'));el.classList.add('active');}
 function toggleLan(){document.getElementById('lanPanel').classList.toggle('open');}
 
-let pl=[],pi=0,play2=false,mpOpen=false;
+let pl=[],pi=0,play2=false,mpOpen=false,curSong=0;
 
 // 从meto URL中提取歌曲ID
 function extractSongId(url){
@@ -266,38 +266,73 @@ async function srchMusic(){
 function renderRes(){
   const el=document.getElementById('mpRes');
   el.innerHTML=pl.map((t,i)=>{
-    const playing=i===pi?' playing':'';
-    return`<div class="mpitem${playing}" onclick="playT(${i})"><div class="rin">${t.title}</div><div class="ria">${t.author}</div></div><span class="rip">▶</span></div>`;
+    const playing=i===pi&&play2?' playing':'';
+    const icon=i===pi&&play2?'⏸':'▶';
+    return`<div class="mpitem${playing}" onclick="playT(${i})"><div class="rin">${t.title}</div><div class="ria">${t.author}</div></div><span class="rip">${icon}</span></div>`;
   }).join('');
 }
 
 function playT(i){
   if(!pl.length)return;
   pi=i;
-  const t=pl[pi];
+  curSong=pl[pi];
+  const t=curSong;
+  // 顶部音乐条状态
   document.getElementById('mname').textContent=t.title;
   document.getElementById('pbtn').textContent='⏸';
   document.getElementById('mcover').classList.add('playing');
   document.getElementById('playerTip').textContent='🎵 正在播放: '+t.title;
-  // 用网易云iframe播放器（可播放完整版）
+  // 歌词滚动：显示"歌名 - 作者"跑马灯
+  startLyricScroll(t.title+' · '+t.author);
+  // 用网易云iframe播放器 auto=1自动播放
   if(t.sid){
     document.getElementById('playerWrap').style.display='block';
-    document.getElementById('neteasePlayer').src='https://music.163.com/outchain/player?type=2&id='+t.sid+'&auto=0&height=86';
+    document.getElementById('neteasePlayer').src='https://music.163.com/outchain/player?type=2&id='+t.sid+'&auto=1&height=86';
   }
   renderRes();
   play2=true;
 }
 
+function startLyricScroll(text){
+  const el=document.getElementById('mlyric');
+  if(!el)return;
+  const doubled=text+' · '+text;
+  el.textContent=doubled;
+  el.className='marquee playing';
+  el.style.animation='none';
+  el.offsetHeight;
+  el.style.animation='mLyricMarquee '+(doubled.length*0.15)+'s linear infinite';
+}
+
+function stopLyricScroll(){
+  const el=document.getElementById('mlyric');
+  if(!el)return;
+  el.className='paused';
+  el.style.animation='none';
+}
+
 function togPlay(){
-  if(!pl.length){srchMusic();return;}
+  if(!pl.length){document.getElementById('mpSInput').value='夜空中最亮的星';srchMusic();return;}
   if(play2){
+    // 暂停：重新加载iframe并设为暂停
     play2=false;
     document.getElementById('pbtn').textContent='▶';
     document.getElementById('mcover').classList.remove('playing');
+    stopLyricScroll();
+    if(curSong&&curSong.sid){
+      document.getElementById('neteasePlayer').src='https://music.163.com/outchain/player?type=2&id='+curSong.sid+'&auto=0&height=86';
+    }
+    renderRes();
   }else{
+    // 播放：重新加载iframe并设为自动播放
     play2=true;
     document.getElementById('pbtn').textContent='⏸';
     document.getElementById('mcover').classList.add('playing');
+    if(curSong&&curSong.sid){
+      document.getElementById('neteasePlayer').src='https://music.163.com/outchain/player?type=2&id='+curSong.sid+'&auto=1&height=86';
+      startLyricScroll(curSong.title+' · '+curSong.author);
+    }
+    renderRes();
   }
 }
 
