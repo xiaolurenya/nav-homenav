@@ -115,7 +115,15 @@ footer{text-align:center;color:var(--dim);font-size:12px;padding:20px;letter-spa
 body.dark{--glass:rgba(0,0,0,.3);--glass-hover:rgba(0,0,0,.45);--border:rgba(255,255,255,.07);background:#0d0d1a}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:none}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-@media(max-width:640px){.topbar{padding:10px 16px}.music-bar{min-width:unset;padding:6px 8px 6px 6px}.minfo{display:none}.grid{grid-template-columns:repeat(auto-fill,minmax(125px,1fr))}.wrap{padding:24px 16px 100px}.lan-btn{bottom:16px;right:16px;font-size:12px;padding:10px 14px}.lan-panel{bottom:70px}.lan-panel.open{right:0}}
+#mlyric-wrap{overflow:hidden;height:14px;line-height:14px;min-width:0}
+#mlyric{white-space:nowrap;font-size:10px;color:rgba(255,255,255,0.55);transition:color .3s;display:block;padding-right:60px}
+#mlyric.playing{color:rgba(255,255,255,0.9)}
+@keyframes mLyricMarquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+#mlyric.marquee{animation:mLyricMarquee 10s linear infinite;display:inline-block;padding-left:100%}
+#mlyric.paused{animation-play-state:paused}
+@media(max-width:768px){.topbar{padding:8px 14px;gap:6px}.logo{font-size:1em}.weather{flex-shrink:0}.music-bar{min-width:unset;padding:5px 8px 5px 5px;gap:5px;max-width:180px}.mcover{width:24px;height:24px;font-size:11px}.mname{font-size:11px}.mbtns button{font-size:12px;padding:2px}.grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}.wrap{padding:20px 14px 90px}.cat{margin-bottom:24px}.search-box{margin-bottom:24px}.swrap input{padding:11px 44px 11px 18px;font-size:14px}.lan-btn{bottom:14px;right:14px;font-size:11px;padding:9px 14px}.lan-panel{bottom:68px;width:180px}.mpctrl button{font-size:18px;padding:5px}.mpctrl{gap:10px}.mpalbum{width:100px;height:100px}#mpcd{width:64px;height:64px}}
+@media(max-width:480px){.topbar{flex-wrap:nowrap;padding:8px 10px}.logo{font-size:.95em;letter-spacing:1px}.weather-desc,#wdesc{display:none}.music-bar{max-width:150px;padding:5px 7px 5px 4px}.mbtns{display:none!important}.mcover{width:22px;height:22px;font-size:10px}.grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}.card{padding:16px 8px 12px}.ci{font-size:1.7em}.wrap{padding:16px 10px 80px}.swrap input{padding:10px 40px 10px 16px;font-size:13px}.mpalbum{width:90px;height:90px}#mpcd{width:58px;height:58px}#mpcdc{width:22px;height:22px}.lyrics-box{height:60px;font-size:10px}.lyric-line.active{font-size:12px}}
+@media(min-width:1200px){.wrap{max-width:1400px}.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}}
 </style>
 </head>
 <body>
@@ -150,7 +158,7 @@ body.dark{--glass:rgba(0,0,0,.3);--glass-hover:rgba(0,0,0,.45);--border:rgba(255
       <div class="mcover" id="mcover">🎵</div>
       <div class="minfo">
         <div class="mname" id="mname">点击播放</div>
-        <div class="martist" id="martist">小路人</div>
+        <div id="mlyric-wrap"><span id="mlyric">♪ 听你想听的歌</span></div>
       </div>
       <div class="mbtns" onclick="event.stopPropagation()">
         <button class="mbtn" onclick="prevT()">⏮</button>
@@ -246,15 +254,20 @@ const BASE='https://api.i-meto.com/meting/api';
 async function srchMusic(){
   const q=document.getElementById('mpSInput').value.trim()||'夜空中最亮的星';
   try{
-    const r=await fetch(`${BASE}?server=netease&type=search&id=${encodeURIComponent(q)}&limit=10`);
+    const r=await fetch('https://api.i-meto.com/meting/api?server=netease&type=search&id='+encodeURIComponent(q)+'&limit=10');
     const d=await r.json();
     if(d&&d.length){
-      pl=d.map(s=>({title:s.title,author:s.author,url:s.url,pic:s.pic,lrc:s.lrc}));
+      pl=d.map(s=>{
+        const sid=s.id||s.songid||0;
+        let h=0;const str=sid+'3go8&$K{}+SF3ytw0fPYl~V%eX@TU';
+        for(let i=0;i<str.length;i++)h=(Math.imul(31,h)+str.charCodeAt(i))|0;
+        const hash=(h>>>0).toString(36).padStart(8,'0');
+        const direct='https://p1.music.126.net/'+hash.slice(0,-1)+'/'+sid+'.mp3';
+        return{title:s.title||s.name||'',author:s.author||s.artists||'',url:s.url||direct,pic:s.pic||'',lrc:s.lrc||'',sid:sid};
+      });
       renderRes();
       if(pl.length) playT(0);
-    }else{
-      document.getElementById('mpName').textContent='未找到歌曲';
-    }
+    }else{document.getElementById('mpName').textContent='未找到歌曲';}
   }catch(e){document.getElementById('mpName').textContent='搜索失败';}
 }
 
@@ -290,6 +303,21 @@ function updateLyrics(){
   document.querySelectorAll('.lyric-line').forEach((l,i)=>l.classList.toggle('active',i===idx));
   const a=document.getElementById('ll'+idx);
   if(a)a.scrollIntoView({behavior:'smooth',block:'center'});
+  const le=document.getElementById('mlyric');
+  if(!le)return;
+  const lyric=curLyrics[idx]||'';
+  if(lyric&&lyric!=='♪ 暂无歌词'){
+    const doubled=lyric+' · '+lyric;
+    le.textContent=doubled;
+    le.className='marquee playing';
+    le.style.animation='none';
+    le.offsetHeight;
+    le.style.animation='mLyricMarquee '+(doubled.length*0.18)+'s linear infinite';
+  }else{
+    le.textContent='♪ '+(pl[pi]?pl[pi].title:'');
+    le.className='';
+    le.style.animation='none';
+  }
 }
 
 function renderRes(){
@@ -323,7 +351,17 @@ async function playT(i){
       if(audio.duration){document.getElementById('mpFill').style.width=(audio.currentTime/audio.duration*100).toFixed(1)+'%';document.getElementById('mpCur').textContent=fmt(audio.currentTime);document.getElementById('mpDur').textContent=fmt(audio.duration);updateLyrics();}
     };
     audio.onended=()=>nextT();
-    audio.onerror=()=>{document.getElementById('mpName').textContent='播放失败(版权)';play2=false;document.getElementById('mpPlayBtn').textContent='▶';document.getElementById('pbtn').textContent='▶';document.getElementById('mpAlbum').classList.remove('playing');document.getElementById('mcover').classList.remove('playing');};
+    audio.onerror=()=>{
+    if(t.url&&!t.url.includes('api.i-meto.com')&&!t.url.includes('p1.music.126.net')){
+      document.getElementById('mpName').textContent='播放失败(版权/网络)';play2=false;
+      document.getElementById('mpPlayBtn').textContent='▶';document.getElementById('pbtn').textContent='▶';
+      document.getElementById('mpAlbum').classList.remove('playing');document.getElementById('mcover').classList.remove('playing');
+      setTimeout(()=>nextT(),1500);return;
+    }
+    const bak='https://api.i-meto.com/meting/api?server=netease&type=url&id='+t.sid+'&auth=bk';
+    audio.src=bak;audio.load();audio.play().catch(()=>{});
+    document.getElementById('mpName').textContent='换源中...';
+  };
   }catch(e){document.getElementById('mpName').textContent='播放失败';play2=false;}
   renderRes();
 }
@@ -332,8 +370,8 @@ function fmt(s){return Math.floor(s/60)+':'+(Math.floor(s%60)+'').padStart(2,'0'
 
 function togPlay(){
   if(!pl.length){srchMusic();toggleMP();return;}
-  if(play2){audio.pause();play2=false;document.getElementById('mpPlayBtn').textContent='▶';document.getElementById('pbtn').textContent='▶';document.getElementById('mpAlbum').classList.remove('playing');document.getElementById('mcover').classList.remove('playing');}
-  else{audio.play().then(()=>{play2=true;document.getElementById('mpPlayBtn').textContent='⏸';document.getElementById('pbtn').textContent='⏸';document.getElementById('mpAlbum').classList.add('playing');document.getElementById('mcover').classList.add('playing');}).catch(()=>{document.getElementById('mpName').text= t.title;play2=false;});}
+  if(play2){audio.pause();play2=false;document.getElementById('mpPlayBtn').textContent='▶';document.getElementById('pbtn').textContent='▶';document.getElementById('mpAlbum').classList.remove('playing');document.getElementById('mcover').classList.remove('playing');const ml=document.getElementById('mlyric');if(ml)ml.classList.add('paused');}
+  else{audio.play().then(()=>{play2=true;document.getElementById('mpPlayBtn').textContent='⏸';document.getElementById('pbtn').textContent='⏸';document.getElementById('mpAlbum').classList.add('playing');document.getElementById('mcover').classList.add('playing');const ml=document.getElementById('mlyric');if(ml){ml.classList.remove('paused');updateLyrics();}}).catch(()=>{document.getElementById('mpName').textContent=t.title;play2=false;});}
 }
 
 function nextT(){if(pl.length)playT((pi+1)%pl.length);}
