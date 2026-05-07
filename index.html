@@ -197,12 +197,15 @@ body.dark{--glass:rgba(0,0,0,.3);--glass-hover:rgba(0,0,0,.45);--border:rgba(255
     <input type="text" id="mpSInput" placeholder="搜索歌曲..." onkeydown="if(event.key==='Enter')srchMusic()">
     <button class="mpsearchbtn" onclick="srchMusic()">🔍 搜索</button>
   </div>
-  <!-- 网易云播放器 iframe -->
-  <div id="playerWrap" style="display:none;margin:8px 0 4px">
-    <iframe id="neteasePlayer" src="" width="100%" height="86" frameborder="0" allow="autoplay" style="border-radius:12px"></iframe>
+  <!-- 网易云播放器 iframe（140px，完整展示） -->
+  <div id="playerWrap" style="margin:8px 0 0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.08)">
+    <iframe id="neteasePlayer" src="" width="100%" height="140" frameborder="0" allow="autoplay" scrolling="no" style="display:block;border-radius:12px"></iframe>
   </div>
-  <div id="playerTip" style="text-align:center;font-size:11px;color:var(--dim);margin-bottom:8px">🔍 搜索歌曲，点击列表直接播放完整版</div>
-  <div class="mpres" id="mpRes" style="display:block;max-height:220px;overflow-y:auto;border-top:1px solid var(--border);padding-top:6px;margin-top:4px"></div>
+  <div id="playerTip" style="text-align:center;font-size:10px;color:var(--dim);margin:6px 0 4px">💡 点击列表歌曲后在播放器中播放，部分歌曲因版权无法播放</div>
+  <div id="songListWrap" style="border-top:1px solid var(--border);padding-top:6px">
+    <div style="font-size:10px;color:var(--dim);margin-bottom:4px;letter-spacing:1px">📋 播放列表</div>
+    <div id="mpRes" style="max-height:200px;overflow-y:auto"></div>
+  </div>
 </div>
 
 <script>
@@ -282,12 +285,12 @@ function playT(i){
   document.getElementById('pbtn').textContent='⏸';
   document.getElementById('mcover').classList.add('playing');
   document.getElementById('playerTip').textContent='🎵 正在播放: '+t.title;
-  // 歌词滚动：显示"歌名 - 作者"跑马灯
+  // 歌词滚动
   startLyricScroll(t.title+' · '+t.author);
-  // 用网易云iframe播放器 auto=1自动播放
+  // 加载到网易云iframe播放器
+  const iframe=document.getElementById('neteasePlayer');
   if(t.sid){
-    document.getElementById('playerWrap').style.display='block';
-    document.getElementById('neteasePlayer').src='https://music.163.com/outchain/player?type=2&id='+t.sid+'&auto=1&height=86';
+    iframe.src='https://music.163.com/outchain/player?type=2&id='+t.sid+'&auto=0&height=140';
   }
   renderRes();
   play2=true;
@@ -313,25 +316,18 @@ function stopLyricScroll(){
 
 function togPlay(){
   if(!pl.length){document.getElementById('mpSInput').value='夜空中最亮的星';srchMusic();return;}
+  // top bar按钮只更新UI，不重载iframe（iframe自有播放控制）
   if(play2){
-    // 暂停：重新加载iframe并设为暂停
     play2=false;
     document.getElementById('pbtn').textContent='▶';
     document.getElementById('mcover').classList.remove('playing');
     stopLyricScroll();
-    if(curSong&&curSong.sid){
-      document.getElementById('neteasePlayer').src='https://music.163.com/outchain/player?type=2&id='+curSong.sid+'&auto=0&height=86';
-    }
     renderRes();
   }else{
-    // 播放：重新加载iframe并设为自动播放
     play2=true;
     document.getElementById('pbtn').textContent='⏸';
     document.getElementById('mcover').classList.add('playing');
-    if(curSong&&curSong.sid){
-      document.getElementById('neteasePlayer').src='https://music.163.com/outchain/player?type=2&id='+curSong.sid+'&auto=1&height=86';
-      startLyricScroll(curSong.title+' · '+curSong.author);
-    }
+    startLyricScroll(curSong.title+' · '+curSong.author);
     renderRes();
   }
 }
