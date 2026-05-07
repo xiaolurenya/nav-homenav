@@ -19,16 +19,16 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'PingFang SC',sans-
 .weather-temp{font-size:15px;font-weight:600;color:#fff}
 .weather-city{font-size:11px;color:var(--dim)}
 .weather-desc{font-size:11px;color:var(--dim)}
-.music-bar{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:50px;padding:6px 12px 6px 6px;cursor:pointer;transition:background .3s;min-width:200px}
+.music-bar{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:50px;padding:8px 14px 8px 8px;cursor:pointer;transition:background .3s;min-width:240px;max-width:300px}
 .music-bar:hover{background:rgba(255,255,255,0.1)}
-.mcover{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#7c6df0,#f472b6);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;overflow:hidden;transition:transform .3s}
+.mcover{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c6df0,#f472b6);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;overflow:hidden;transition:transform .3s}
 .mcover.playing{animation:spinCover 10s linear infinite}
 @keyframes spinCover{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-.minfo{min-width:0;flex:1}
-.mname{font-size:12px;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.martist{font-size:10px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mbtns{display:flex;gap:3px}
-.mbtn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:13px;padding:2px;transition:color .2s;line-height:1}
+.minfo{min-width:0;flex:1;overflow:hidden}
+.mname{font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.martist{font-size:10px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.mbtns{display:flex;gap:2px;align-items:center}
+.mbtn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:18px;padding:3px;transition:color .2s;line-height:1;flex-shrink:0}
 .mbtn:hover{color:#fff}
 .top-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .wrap{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:36px 28px 80px}
@@ -121,7 +121,7 @@ body.dark{--glass:rgba(0,0,0,.3);--glass-hover:rgba(0,0,0,.45);--border:rgba(255
 @keyframes mLyricMarquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 #mlyric.marquee{animation:mLyricMarquee 10s linear infinite;display:inline-block;padding-left:100%}
 #mlyric.paused{animation-play-state:paused}
-@media(max-width:768px){.topbar{padding:8px 14px;gap:6px}.logo{font-size:1em}.weather{flex-shrink:0}.music-bar{min-width:unset;padding:5px 8px 5px 5px;gap:5px;max-width:180px}.mcover{width:24px;height:24px;font-size:11px}.mname{font-size:11px}.mbtns button{font-size:12px;padding:2px}.grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}.wrap{padding:20px 14px 90px}.cat{margin-bottom:24px}.search-box{margin-bottom:24px}.swrap input{padding:11px 44px 11px 18px;font-size:14px}.lan-btn{bottom:14px;right:14px;font-size:11px;padding:9px 14px}.lan-panel{bottom:68px;width:180px}.mpctrl button{font-size:18px;padding:5px}.mpctrl{gap:10px}.mpalbum{width:100px;height:100px}#mpcd{width:64px;height:64px}}
+@media(max-width:768px){.topbar{padding:8px 14px;gap:6px}.logo{font-size:1em}.weather{flex-shrink:0}.music-bar{min-width:160px;padding:6px 10px 6px 6px;gap:7px;max-width:200px}.mcover{width:28px;height:28px;font-size:12px}.mname{font-size:12px}.martist{font-size:9px}.mbtns button{font-size:14px}.grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}.wrap{padding:20px 14px 90px}.cat{margin-bottom:24px}.search-box{margin-bottom:24px}.swrap input{padding:11px 44px 11px 18px;font-size:14px}.lan-btn{bottom:14px;right:14px;font-size:11px;padding:9px 14px}.lan-panel{bottom:68px;width:180px}.mpctrl button{font-size:18px;padding:5px}.mpctrl{gap:10px}.mpalbum{width:100px;height:100px}#mpcd{width:64px;height:64px}}
 @media(max-width:480px){.topbar{flex-wrap:nowrap;padding:8px 10px}.logo{font-size:.95em;letter-spacing:1px}.weather-desc,#wdesc{display:none}.music-bar{max-width:150px;padding:5px 7px 5px 4px}.mbtns{display:none!important}.mcover{width:22px;height:22px;font-size:10px}.grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}.card{padding:16px 8px 12px}.ci{font-size:1.7em}.wrap{padding:16px 10px 80px}.swrap input{padding:10px 40px 10px 16px;font-size:13px}.mpalbum{width:90px;height:90px}#mpcd{width:58px;height:58px}#mpcdc{width:22px;height:22px}.lyrics-box{height:60px;font-size:10px}.lyric-line.active{font-size:12px}}
 @media(min-width:1200px){.wrap{max-width:1400px}.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}}
 @media(min-width:1600px){.wrap{max-width:1600px;padding:40px 48px 100px}.grid{grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px}.card{padding:24px 14px 18px}.ci{font-size:2.4em}.cn{font-size:14px}.cat{margin-bottom:40px}}
@@ -159,7 +159,7 @@ body.dark{--glass:rgba(0,0,0,.3);--glass-hover:rgba(0,0,0,.45);--border:rgba(255
       <div class="mcover" id="mcover">🎵</div>
       <div class="minfo">
         <div class="mname" id="mname">点击播放</div>
-        <div id="mlyric-wrap"><span id="mlyric">♪ 听你想听的歌</span></div>
+        <div class="martist" id="martist">小路人</div>
       </div>
       <div class="mbtns" onclick="event.stopPropagation()">
         <button class="mbtn" onclick="prevT()">⏮</button>
@@ -193,20 +193,43 @@ body.dark{--glass:rgba(0,0,0,.3);--glass-hover:rgba(0,0,0,.45);--border:rgba(255
 <!-- Music Panel -->
 <div id="mp">
   <div class="mph"><span class="mpt">🎵 音乐播放</span><button class="mpcls" onclick="toggleMP()">✕</button></div>
+  <!-- 搜索栏 -->
   <div class="mpsearch">
     <input type="text" id="mpSInput" placeholder="搜索歌曲..." onkeydown="if(event.key==='Enter')srchMusic()">
     <button class="mpsearchbtn" onclick="srchMusic()">🔍 搜索</button>
   </div>
-  <!-- 网易云播放器 iframe（140px，完整展示） -->
-  <div id="playerWrap" style="margin:8px 0 0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.08)">
-    <iframe id="neteasePlayer" src="" width="100%" height="140" frameborder="0" allow="autoplay" scrolling="no" style="display:block;border-radius:12px"></iframe>
+  <!-- iTunes 直链播放器 -->
+  <div id="playerWrap" style="display:none;margin:8px 0 4px">
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid var(--border)">
+      <img id="songImg" src="" style="width:48px;height:48px;border-radius:8px;flex-shrink:0;object-fit:cover;background:linear-gradient(135deg,#7c6df0,#f472b6)">
+      <div style="flex:1;min-width:0">
+        <div id="songTitle" style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">--</div>
+        <div id="songArtist" style="font-size:10px;color:var(--dim);margin-top:2px">--</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px">
+        <button class="mbtn" onclick="prevT()" style="font-size:18px">⏮</button>
+        <button class="mbtn" onclick="togPlay()" id="pbtn2" style="font-size:24px;color:#a78bfa">▶</button>
+        <button class="mbtn" onclick="nextT()" style="font-size:18px">⏭</button>
+      </div>
+    </div>
+    <!-- 进度条 -->
+    <div id="mpBar" style="width:100%;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;cursor:pointer;margin-top:6px;position:relative">
+      <div id="mpFill" style="height:100%;background:linear-gradient(90deg,#7c6df0,#a78bfa);border-radius:2px;width:0%;transition:width .3s;pointer-events:none"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:4px">
+      <span id="mpCur">0:00</span><span id="mpDur">0:30</span>
+    </div>
   </div>
-  <div id="playerTip" style="text-align:center;font-size:10px;color:var(--dim);margin:6px 0 4px">💡 点击列表歌曲后在播放器中播放，部分歌曲因版权无法播放</div>
-  <div id="songListWrap" style="border-top:1px solid var(--border);padding-top:6px">
+  <div id="searchTip" style="text-align:center;font-size:11px;color:var(--dim);margin:4px 0">🔍 输入歌名/歌手，点搜索</div>
+  <!-- 歌曲列表 -->
+  <div id="songListWrap" style="border-top:1px solid var(--border);padding-top:6px;margin-top:4px">
     <div style="font-size:10px;color:var(--dim);margin-bottom:4px;letter-spacing:1px">📋 播放列表</div>
     <div id="mpRes" style="max-height:200px;overflow-y:auto"></div>
   </div>
 </div>
+
+<!-- 隐藏的 audio 元素 -->
+<audio id="audioEl" style="display:none"></audio>
 
 <script>
 const LINKS=[
@@ -229,7 +252,7 @@ const LINKS=[
   {name:"GitHub",icon:"🐙",url:"https://github.com/",cat:"dev",tag:"代码"},
 ];
 const m2={local:'cl',tools:'ct',pt:'cp',dev:'cd'};
-function render(){for(const[c,id]of Object.entries(m2)){const el=document.getElementById(id);el.innerHTML=LINKS.filter(l=>l.cat===c).map(l=>`<a class="card" href="${l.url}"><div class="cglow"></div><span class="ctag">${l.tag}</span><span class="ci">${l.icon}</span><div class="cn">${l.name}</div></a>`).join('');}}
+function render(){for(const[c,id]of Object.entries(m2)){const el=document.getElementById(id);el.innerHTML=LINKS.filter(l=>l.cat===c).map(l=>`<a class="card" href="${l.url}" target="_blank" rel="noopener noreferrer"><div class="cglow"></div><span class="ctag">${l.tag}</span><span class="ci">${l.icon}</span><div class="cn">${l.name}</div></a>`).join('');}}
 render();
 
 const AK='e6529af7ef8ded3cb5719fc90dda27d8';
@@ -241,25 +264,23 @@ function goSearch(){const q=document.getElementById('sInput').value.trim();if(q)
 function setE(n,el){curE=n;document.querySelectorAll('.epill').forEach(p=>p.classList.remove('active'));el.classList.add('active');}
 function toggleLan(){document.getElementById('lanPanel').classList.toggle('open');}
 
-let pl=[],pi=0,play2=false,mpOpen=false,curSong=0;
-
-// 从meto URL中提取歌曲ID
-function extractSongId(url){
-  if(!url)return 0;
-  const m=url.match(/[?&]id=(\d+)/);
-  return m?m[1]:0;
-}
+let pl=[],pi=0,play2=false,mpOpen=false;
+const audio=document.getElementById('audioEl');
 
 async function srchMusic(){
   const q=document.getElementById('mpSInput').value.trim()||'夜空中最亮的星';
   try{
-    const r=await fetch('https://api.i-meto.com/meting/api?server=netease&type=search&id='+encodeURIComponent(q)+'&limit=12');
+    const r=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=music&entity=song&limit=12');
     const d=await r.json();
-    if(d&&d.length){
-      pl=d.map(s=>{
-        const sid=s.id||extractSongId(s.url)||0;
-        return{title:s.title||s.name||'未知',author:s.author||s.artists||'',url:s.url||'',sid:sid};
-      });
+    if(d.results&&d.results.length){
+      pl=d.results.map(s=>({
+        title:s.trackName||'未知',
+        author:s.artistName||'',
+        album:s.collectionName||'',
+        duration:s.trackTimeMillis||30000,
+        pic:s.artworkUrl100?.replace('100x100','300x300')||'',
+        url:s.previewUrl||'',
+      }));
       renderRes();
       if(pl.length) playT(0);
     }else{document.getElementById('mpRes').innerHTML='<div style="text-align:center;padding:16px;color:var(--dim);font-size:12px">未找到相关歌曲</div>';}
@@ -278,58 +299,60 @@ function renderRes(){
 function playT(i){
   if(!pl.length)return;
   pi=i;
-  curSong=pl[pi];
-  const t=curSong;
-  // 顶部音乐条状态
+  const t=pl[pi];
+  // 顶部音乐条
   document.getElementById('mname').textContent=t.title;
+  document.getElementById('martist').textContent=t.author;
   document.getElementById('pbtn').textContent='⏸';
+  document.getElementById('pbtn2').textContent='⏸';
   document.getElementById('mcover').classList.add('playing');
-  document.getElementById('playerTip').textContent='🎵 正在播放: '+t.title;
-  // 歌词滚动
-  startLyricScroll(t.title+' · '+t.author);
-  // 加载到网易云iframe播放器
-  const iframe=document.getElementById('neteasePlayer');
-  if(t.sid){
-    iframe.src='https://music.163.com/outchain/player?type=2&id='+t.sid+'&auto=0&height=140';
+  // 播放器面板
+  document.getElementById('playerWrap').style.display='block';
+  document.getElementById('searchTip').style.display='none';
+  document.getElementById('songImg').src=t.pic;
+  document.getElementById('songTitle').textContent=t.title;
+  document.getElementById('songArtist').textContent=t.author;
+  document.getElementById('mpDur').textContent=fmt(t.duration/1000);
+  // 播放直链
+  audio.src=t.url||'';
+  audio.currentTime=0;
+  document.getElementById('mpFill').style.width='0%';
+  document.getElementById('mpCur').textContent='0:00';
+  if(t.url){
+    audio.play().then(()=>{play2=true;renderRes();}).catch(e=>{document.getElementById('songTitle').textContent=t.title+' (无法播放)';play2=false;});
+  }else{
+    document.getElementById('songTitle').textContent=t.title+' (无预览)';
+    play2=false;
   }
   renderRes();
-  play2=true;
+  // 进度条更新
+  audio.ontimeupdate=()=>{
+    if(audio.duration){
+      const pct=(audio.currentTime/audio.duration*100).toFixed(1);
+      document.getElementById('mpFill').style.width=pct+'%';
+      document.getElementById('mpCur').textContent=fmt(audio.currentTime);
+    }
+  };
+  audio.onended=()=>{nextT();};
 }
 
-function startLyricScroll(text){
-  const el=document.getElementById('mlyric');
-  if(!el)return;
-  const doubled=text+' · '+text;
-  el.textContent=doubled;
-  el.className='marquee playing';
-  el.style.animation='none';
-  el.offsetHeight;
-  el.style.animation='mLyricMarquee '+(doubled.length*0.15)+'s linear infinite';
-}
-
-function stopLyricScroll(){
-  const el=document.getElementById('mlyric');
-  if(!el)return;
-  el.className='paused';
-  el.style.animation='none';
-}
+function fmt(s){return Math.floor(s/60)+':'+(Math.floor(s%60)+'').padStart(2,'0');}
 
 function togPlay(){
   if(!pl.length){document.getElementById('mpSInput').value='夜空中最亮的星';srchMusic();return;}
-  // top bar按钮只更新UI，不重载iframe（iframe自有播放控制）
   if(play2){
-    play2=false;
+    audio.pause();play2=false;
     document.getElementById('pbtn').textContent='▶';
+    document.getElementById('pbtn2').textContent='▶';
     document.getElementById('mcover').classList.remove('playing');
-    stopLyricScroll();
-    renderRes();
   }else{
-    play2=true;
+    audio.play().then(()=>{play2=true;
     document.getElementById('pbtn').textContent='⏸';
+    document.getElementById('pbtn2').textContent='⏸';
     document.getElementById('mcover').classList.add('playing');
-    startLyricScroll(curSong.title+' · '+curSong.author);
-    renderRes();
+    }).catch(()=>{play2=false;});
   }
+  renderRes();
 }
 
 function nextT(){if(pl.length)playT((pi+1)%pl.length);}
@@ -343,6 +366,15 @@ function toggleMP(){
     srchMusic();
   }
 }
+
+// 进度条点击跳转
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('mpBar')?.addEventListener('click',e=>{
+    const bar=document.getElementById('mpBar');
+    const rect=bar.getBoundingClientRect();
+    if(audio.duration)audio.currentTime=(e.clientX-rect.left)/rect.width*audio.duration;
+  });
+});
 </script>
 </body>
 </html>
