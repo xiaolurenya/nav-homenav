@@ -31,7 +31,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,'PingFang SC',sans-
 .mbtn{background:none;border:none;color:var(--dim);cursor:pointer;font-size:13px;padding:2px;transition:color .2s;line-height:1}
 .mbtn:hover{color:#fff}
 .top-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:36px 28px 80px}
+.wrap{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:36px 28px 80px}
 .search-box{text-align:center;margin-bottom:40px;animation:fadeDown .8s ease both}
 .swrap{position:relative;max-width:620px;margin:0 auto}
 .swrap input{width:100%;padding:14px 50px 14px 22px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:50px;color:#fff;font-size:15px;backdrop-filter:blur(20px);transition:all .3s;outline:none}
@@ -124,6 +124,7 @@ body.dark{--glass:rgba(0,0,0,.3);--glass-hover:rgba(0,0,0,.45);--border:rgba(255
 @media(max-width:768px){.topbar{padding:8px 14px;gap:6px}.logo{font-size:1em}.weather{flex-shrink:0}.music-bar{min-width:unset;padding:5px 8px 5px 5px;gap:5px;max-width:180px}.mcover{width:24px;height:24px;font-size:11px}.mname{font-size:11px}.mbtns button{font-size:12px;padding:2px}.grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}.wrap{padding:20px 14px 90px}.cat{margin-bottom:24px}.search-box{margin-bottom:24px}.swrap input{padding:11px 44px 11px 18px;font-size:14px}.lan-btn{bottom:14px;right:14px;font-size:11px;padding:9px 14px}.lan-panel{bottom:68px;width:180px}.mpctrl button{font-size:18px;padding:5px}.mpctrl{gap:10px}.mpalbum{width:100px;height:100px}#mpcd{width:64px;height:64px}}
 @media(max-width:480px){.topbar{flex-wrap:nowrap;padding:8px 10px}.logo{font-size:.95em;letter-spacing:1px}.weather-desc,#wdesc{display:none}.music-bar{max-width:150px;padding:5px 7px 5px 4px}.mbtns{display:none!important}.mcover{width:22px;height:22px;font-size:10px}.grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}.card{padding:16px 8px 12px}.ci{font-size:1.7em}.wrap{padding:16px 10px 80px}.swrap input{padding:10px 40px 10px 16px;font-size:13px}.mpalbum{width:90px;height:90px}#mpcd{width:58px;height:58px}#mpcdc{width:22px;height:22px}.lyrics-box{height:60px;font-size:10px}.lyric-line.active{font-size:12px}}
 @media(min-width:1200px){.wrap{max-width:1400px}.grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}}
+@media(min-width:1600px){.wrap{max-width:1600px;padding:40px 48px 100px}.grid{grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px}.card{padding:24px 14px 18px}.ci{font-size:2.4em}.cn{font-size:14px}.cat{margin-bottom:40px}}
 </style>
 </head>
 <body>
@@ -194,24 +195,15 @@ body.dark{--glass:rgba(0,0,0,.3);--glass-hover:rgba(0,0,0,.45);--border:rgba(255
   <div class="mph"><span class="mpt">🎵 音乐播放</span><button class="mpcls" onclick="toggleMP()">✕</button></div>
   <div class="mpsearch">
     <input type="text" id="mpSInput" placeholder="搜索歌曲..." onkeydown="if(event.key==='Enter')srchMusic()">
-    <button class="mpsearchbtn" onclick="srchMusic()">搜索</button>
+    <button class="mpsearchbtn" onclick="srchMusic()">🔍 搜索</button>
   </div>
-  <div class="mpalbum" id="mpAlbum"><div class="mpcd"><div class="mpcdc">🎵</div></div></div>
-  <div class="mpn" id="mpName">点击播放</div>
-  <div class="mpa" id="mpArtist">小路人</div>
-  <div class="lyrics" id="lyrics"><div class="lyric-empty">♪ 点击播放后显示歌词</div></div>
-  <div class="mpbar" id="mpBar"><div class="mpfill" id="mpFill"></div></div>
-  <div class="mptimes"><span id="mpCur">0:00</span><span id="mpDur">0:00</span></div>
-  <div class="mpctrl">
-    <button onclick="prevT()">⏮</button>
-    <button class="playb" onclick="togPlay()" id="mpPlayBtn">▶</button>
-    <button onclick="nextT()">⏭</button>
+  <!-- 网易云播放器 iframe -->
+  <div id="playerWrap" style="display:none;margin:8px 0 4px">
+    <iframe id="neteasePlayer" src="" width="100%" height="86" frameborder="0" allow="autoplay" style="border-radius:12px"></iframe>
   </div>
-  <button class="mplistbtn" onclick="toggleRes()">📋 播放列表</button>
-  <div class="mpres" id="mpRes"></div>
+  <div id="playerTip" style="text-align:center;font-size:11px;color:var(--dim);margin-bottom:8px">🔍 搜索歌曲，点击列表直接播放完整版</div>
+  <div class="mpres" id="mpRes" style="display:block;max-height:220px;overflow-y:auto;border-top:1px solid var(--border);padding-top:6px;margin-top:4px"></div>
 </div>
-
-<audio id="audioE" style="display:none"></audio>
 
 <script>
 const LINKS=[
@@ -246,132 +238,67 @@ function goSearch(){const q=document.getElementById('sInput').value.trim();if(q)
 function setE(n,el){curE=n;document.querySelectorAll('.epill').forEach(p=>p.classList.remove('active'));el.classList.add('active');}
 function toggleLan(){document.getElementById('lanPanel').classList.toggle('open');}
 
-const audio=document.getElementById('audioE');
-let pl=[],pi=0,play2=false,mpOpen=false,curLyrics=[],curLyricTime=[];
+let pl=[],pi=0,play2=false,mpOpen=false;
 
-const BASE='https://api.i-meto.com/meting/api';
+// 从meto URL中提取歌曲ID
+function extractSongId(url){
+  if(!url)return 0;
+  const m=url.match(/[?&]id=(\d+)/);
+  return m?m[1]:0;
+}
 
 async function srchMusic(){
   const q=document.getElementById('mpSInput').value.trim()||'夜空中最亮的星';
   try{
-    const r=await fetch('https://api.i-meto.com/meting/api?server=netease&type=search&id='+encodeURIComponent(q)+'&limit=10');
+    const r=await fetch('https://api.i-meto.com/meting/api?server=netease&type=search&id='+encodeURIComponent(q)+'&limit=12');
     const d=await r.json();
     if(d&&d.length){
       pl=d.map(s=>{
-        const sid=s.id||s.songid||0;
-        let h=0;const str=sid+'3go8&$K{}+SF3ytw0fPYl~V%eX@TU';
-        for(let i=0;i<str.length;i++)h=(Math.imul(31,h)+str.charCodeAt(i))|0;
-        const hash=(h>>>0).toString(36).padStart(8,'0');
-        const direct='https://p1.music.126.net/'+hash.slice(0,-1)+'/'+sid+'.mp3';
-        return{title:s.title||s.name||'',author:s.author||s.artists||'',url:s.url||direct,pic:s.pic||'',lrc:s.lrc||'',sid:sid};
+        const sid=s.id||extractSongId(s.url)||0;
+        return{title:s.title||s.name||'未知',author:s.author||s.artists||'',url:s.url||'',sid:sid};
       });
       renderRes();
       if(pl.length) playT(0);
-    }else{document.getElementById('mpName').textContent='未找到歌曲';}
-  }catch(e){document.getElementById('mpName').textContent='搜索失败';}
-}
-
-function parseLRC(lrc){
-  if(!lrc) return {times:[],lyrics:[]};
-  const times=[],lyrics=[];
-  for(const line of lrc.split('\n')){
-    const m=line.match(/\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\](.*)/);
-    if(m){times.push(parseInt(m[1])*60+parseInt(m[2])+(parseInt((m[3]||'0').padEnd(3,'0'))/1000));lyrics.push(m[4].trim()||'♪');}
-  }
-  return {times,lyrics};
-}
-
-async function loadLRC(url){
-  try{
-    const r=await fetch(url);
-    const text=await r.text();
-    const p=parseLRC(text);curLyrics=p.lyrics;curLyricTime=p.times;
-  }catch(e){curLyrics=['♪ 暂无歌词'];curLyricTime=[0];}
-  renderLyrics();
-}
-
-function renderLyrics(){
-  const el=document.getElementById('lyrics');
-  el.innerHTML=curLyrics.length?curLyrics.map((l,i)=>`<div class="lyric-line" id="ll${i}">${l}</div>`).join(''):'<div class="lyric-empty">♪ 暂无歌词</div>';
-}
-
-function updateLyrics(){
-  if(!curLyricTime.length||!curLyrics.length||curLyrics[0]==='♪ 暂无歌词') return;
-  const t=audio.currentTime;
-  let idx=0;
-  for(let i=0;i<curLyricTime.length;i++){if(t>=curLyricTime[i])idx=i;}
-  document.querySelectorAll('.lyric-line').forEach((l,i)=>l.classList.toggle('active',i===idx));
-  const a=document.getElementById('ll'+idx);
-  if(a)a.scrollIntoView({behavior:'smooth',block:'center'});
-  const le=document.getElementById('mlyric');
-  if(!le)return;
-  const lyric=curLyrics[idx]||'';
-  if(lyric&&lyric!=='♪ 暂无歌词'){
-    const doubled=lyric+' · '+lyric;
-    le.textContent=doubled;
-    le.className='marquee playing';
-    le.style.animation='none';
-    le.offsetHeight;
-    le.style.animation='mLyricMarquee '+(doubled.length*0.18)+'s linear infinite';
-  }else{
-    le.textContent='♪ '+(pl[pi]?pl[pi].title:'');
-    le.className='';
-    le.style.animation='none';
-  }
+    }else{document.getElementById('mpRes').innerHTML='<div style="text-align:center;padding:16px;color:var(--dim);font-size:12px">未找到相关歌曲</div>';}
+  }catch(e){document.getElementById('mpRes').innerHTML='<div style="text-align:center;padding:16px;color:var(--dim);font-size:12px">搜索失败，请重试</div>';}
 }
 
 function renderRes(){
   const el=document.getElementById('mpRes');
-  el.innerHTML=pl.map((t,i)=>`<div class="mpitem${i===pi?' playing':''}" onclick="playT(${i})"><div class="rin">${t.title}</div><div class="ria">${t.author}</div></div><span class="rip">▶</span></div>`).join('');
+  el.innerHTML=pl.map((t,i)=>{
+    const playing=i===pi?' playing':'';
+    return`<div class="mpitem${playing}" onclick="playT(${i})"><div class="rin">${t.title}</div><div class="ria">${t.author}</div></div><span class="rip">▶</span></div>`;
+  }).join('');
 }
 
-async function playT(i){
+function playT(i){
+  if(!pl.length)return;
   pi=i;
   const t=pl[pi];
-  document.getElementById('mpName').textContent=t.title;
-  document.getElementById('mpArtist').textContent=t.author;
   document.getElementById('mname').textContent=t.title;
-  document.getElementById('martist').textContent=t.author;
-  document.getElementById('mpPlayBtn').textContent='⏸';
   document.getElementById('pbtn').textContent='⏸';
-  document.getElementById('mpAlbum').classList.add('playing');
   document.getElementById('mcover').classList.add('playing');
-  document.getElementById('lyrics').innerHTML='<div class="lyric-empty">⌛ 加载歌词...</div>';
-  curLyrics=[];curLyricTime=[];
-  audio.src=t.url;
-  audio.currentTime=0;
-  document.getElementById('mpFill').style.width='0%';
-  document.getElementById('mpCur').textContent='0:00';
-  document.getElementById('mpDur').textContent='0:00';
-  loadLRC(t.lrc);
-  try{
-    await audio.play();
-    play2=true;
-    audio.ontimeupdate=()=>{
-      if(audio.duration){document.getElementById('mpFill').style.width=(audio.currentTime/audio.duration*100).toFixed(1)+'%';document.getElementById('mpCur').textContent=fmt(audio.currentTime);document.getElementById('mpDur').textContent=fmt(audio.duration);updateLyrics();}
-    };
-    audio.onended=()=>nextT();
-    audio.onerror=()=>{
-    if(t.url&&!t.url.includes('api.i-meto.com')&&!t.url.includes('p1.music.126.net')){
-      document.getElementById('mpName').textContent='播放失败(版权/网络)';play2=false;
-      document.getElementById('mpPlayBtn').textContent='▶';document.getElementById('pbtn').textContent='▶';
-      document.getElementById('mpAlbum').classList.remove('playing');document.getElementById('mcover').classList.remove('playing');
-      setTimeout(()=>nextT(),1500);return;
-    }
-    const bak='https://api.i-meto.com/meting/api?server=netease&type=url&id='+t.sid+'&auth=bk';
-    audio.src=bak;audio.load();audio.play().catch(()=>{});
-    document.getElementById('mpName').textContent='换源中...';
-  };
-  }catch(e){document.getElementById('mpName').textContent='播放失败';play2=false;}
+  document.getElementById('playerTip').textContent='🎵 正在播放: '+t.title;
+  // 用网易云iframe播放器（可播放完整版）
+  if(t.sid){
+    document.getElementById('playerWrap').style.display='block';
+    document.getElementById('neteasePlayer').src='https://music.163.com/outchain/player?type=2&id='+t.sid+'&auto=0&height=86';
+  }
   renderRes();
+  play2=true;
 }
 
-function fmt(s){return Math.floor(s/60)+':'+(Math.floor(s%60)+'').padStart(2,'0');}
-
 function togPlay(){
-  if(!pl.length){srchMusic();toggleMP();return;}
-  if(play2){audio.pause();play2=false;document.getElementById('mpPlayBtn').textContent='▶';document.getElementById('pbtn').textContent='▶';document.getElementById('mpAlbum').classList.remove('playing');document.getElementById('mcover').classList.remove('playing');const ml=document.getElementById('mlyric');if(ml)ml.classList.add('paused');}
-  else{audio.play().then(()=>{play2=true;document.getElementById('mpPlayBtn').textContent='⏸';document.getElementById('pbtn').textContent='⏸';document.getElementById('mpAlbum').classList.add('playing');document.getElementById('mcover').classList.add('playing');const ml=document.getElementById('mlyric');if(ml){ml.classList.remove('paused');updateLyrics();}}).catch(()=>{document.getElementById('mpName').textContent=t.title;play2=false;});}
+  if(!pl.length){srchMusic();return;}
+  if(play2){
+    play2=false;
+    document.getElementById('pbtn').textContent='▶';
+    document.getElementById('mcover').classList.remove('playing');
+  }else{
+    play2=true;
+    document.getElementById('pbtn').textContent='⏸';
+    document.getElementById('mcover').classList.add('playing');
+  }
 }
 
 function nextT(){if(pl.length)playT((pi+1)%pl.length);}
@@ -380,9 +307,11 @@ function prevT(){if(pl.length)playT((pi-1+pl.length)%pl.length);}
 function toggleMP(){
   mpOpen=!mpOpen;
   document.getElementById('mp').classList.toggle('show',mpOpen);
-  if(mpOpen&&!pl.length) srchMusic();
+  if(mpOpen&&!pl.length){
+    document.getElementById('mpSInput').value='夜空中最亮的星';
+    srchMusic();
+  }
 }
-function toggleRes(){document.getElementById('mpRes').classList.toggle('show');}
 </script>
 </body>
 </html>
