@@ -229,7 +229,7 @@ body.dark{--glass:rgba(0,0,0,.3);--glass-hover:rgba(0,0,0,.45);--border:rgba(255
 </div>
 
 <!-- 隐藏的 audio 元素 -->
-<audio id="audioEl" style="display:none"></audio>
+<audio id="audioEl" crossorigin="anonymous" style="display:none" preload="metadata" type="audio/mp4"></audio>
 
 <script>
 const LINKS=[
@@ -266,6 +266,7 @@ function toggleLan(){document.getElementById('lanPanel').classList.toggle('open'
 
 let pl=[],pi=0,play2=false,mpOpen=false;
 const audio=document.getElementById('audioEl');
+audio.crossOrigin="anonymous";
 
 async function srchMusic(){
   const q=document.getElementById('mpSInput').value.trim()||'夜空中最亮的星';
@@ -309,17 +310,24 @@ function playT(i){
   // 播放器面板
   document.getElementById('playerWrap').style.display='block';
   document.getElementById('searchTip').style.display='none';
-  document.getElementById('songImg').src=t.pic;
+  document.getElementById('songImg').src=t.pic||'';
   document.getElementById('songTitle').textContent=t.title;
   document.getElementById('songArtist').textContent=t.author;
-  document.getElementById('mpDur').textContent=fmt(t.duration/1000);
-  // 播放直链
-  audio.src=t.url||'';
-  audio.currentTime=0;
+  document.getElementById('mpDur').textContent=t.duration?fmt(t.duration/1000):'0:30';
+  // 播放直链（强制audio/mp4类型，解决x-m4p兼容问题）
+  audio.crossOrigin = "anonymous";
+  audio.src = t.url||'';
+  audio.type = 'audio/mp4';
+  audio.currentTime = 0;
   document.getElementById('mpFill').style.width='0%';
   document.getElementById('mpCur').textContent='0:00';
   if(t.url){
-    audio.play().then(()=>{play2=true;renderRes();}).catch(e=>{document.getElementById('songTitle').textContent=t.title+' (无法播放)';play2=false;});
+    // 等待音频可播放后再play
+    const doPlay = () => {
+      audio.play().then(()=>{play2=true;renderRes();}).catch(()=>{play2=false;});
+    };
+    if(audio.readyState>=3){doPlay();}
+    else{audio.addEventListener('canplay',doPlay,{once:true});}
   }else{
     document.getElementById('songTitle').textContent=t.title+' (无预览)';
     play2=false;
